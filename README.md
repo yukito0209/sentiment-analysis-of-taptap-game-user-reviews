@@ -1,6 +1,6 @@
-# sentiment-analysis-of-taptap-game-user-reviews
+# Sentiment Analysis of TapTap Game User Reviews
 
-A Data-Driven Study on Sentiment Analysis of TapTap Game User Reviews
+<!-- A Data-Driven Study on Sentiment Analysis of TapTap Game User Reviews -->
 
 ## Overview
 
