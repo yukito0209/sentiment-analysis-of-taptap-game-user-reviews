@@ -1,109 +1,235 @@
-# Sentiment Analysis of TapTap Game User Reviews
+# TapTap游戏用户评论情感分析
 
-<!-- A Data-Driven Study on Sentiment Analysis of TapTap Game User Reviews -->
+<!-- 基于机器学习的TapTap游戏用户评论情感分析研究 -->
 
-## Overview
+一个全面的情感分析项目，针对TapTap移动游戏平台的中文用户评论，运用从传统机器学习到深度学习的多种技术进行情感分类。
 
-This project aims to develop and evaluate various machine learning models for sentiment analysis on user reviews from the TapTap mobile gaming platform. The goal is to accurately classify reviews as positive or negative, leveraging techniques ranging from traditional ML to advanced deep learning and ensemble methods. This project was completed as part of the IS6941 Machine Learning and Social Media Analytics course.
+## 项目概述
 
-**Final Model Accuracy:** 86% (achieved using a Stacking Ensemble)
+本项目旨在开发和评估各种机器学习模型，用于分析TapTap游戏平台用户评论的情感倾向。通过对比从词典方法到先进集成学习的多种技术，实现准确的正负面情感分类。
 
-## Key Features
+**最终模型准确率：86%**（通过堆叠集成模型实现）
 
-* **Data Collection:** Custom web crawler to fetch reviews from TapTap API.
-* **Comprehensive Preprocessing:** Handles informal text, emojis, Chinese NLP specifics.
-* **Wide Model Evaluation:** Compares Lexicon-based, traditional ML (LR, KNN, DT, SVM, AdaBoost), Gradient Boosting (XGBoost, CatBoost), Deep Learning (CNN, BiLSTM), and Pre-trained Language Models (BERT).
-* **Advanced Ensemble:** Implements a Stacking Generalization model combining XGBoost, CatBoost, and BERT-base-Chinese for optimal performance.
-* **Detailed Analysis:** Provides performance metrics and visualizations for all tested models.
+## 核心特性
 
-## Motivation
+- **数据收集**：自定义爬虫工具，从TapTap API获取用户评论
+- **全面预处理**：处理非正式文本、表情符号、中文NLP特殊性
+- **模型对比**：涵盖词典方法、传统ML、梯度提升、深度学习和预训练语言模型
+- **先进集成**：堆叠泛化模型，结合XGBoost、CatBoost和BERT-base-Chinese
+- **详细分析**：完整的性能指标和可视化结果
 
-Understanding user sentiment is crucial for TapTap, game developers, and players. Manually analyzing millions of reviews is infeasible. This project explores automated methods to extract valuable insights from review text, addressing challenges like informal language and gaming context.
+## 项目结构
 
-## Dataset
+```
+sentiment-analysis-of-taptap-game-user-reviews/
+├── analytics/                          # 核心分析代码
+│   ├── data_cleaning/                   # 数据清洗
+│   │   ├── data_cleaning.py            # 主要数据清洗脚本
+│   │   └── integrate.ipynb             # 数据整合笔记本
+│   ├── data_exploring/                  # 数据探索
+│   │   ├── data_exploring.ipynb        # 探索性数据分析
+│   │   └── taptap_wordcloud_high_res.png
+│   ├── traditional_ml_models/           # 传统机器学习模型
+│   │   ├── decision_tree.ipynb         # 决策树
+│   │   ├── knn.ipynb                   # K近邻
+│   │   ├── logistic_reg.ipynb          # 逻辑回归
+│   │   └── svm.ipynb                   # 支持向量机
+│   ├── ensemble_learning_models/        # 集成学习模型
+│   │   ├── adaboost.ipynb              # AdaBoost
+│   │   ├── catboost.ipynb              # CatBoost
+│   │   └── xgboost.ipynb               # XGBoost
+│   ├── neural_network_models/           # 神经网络模型
+│   │   ├── bilstm.ipynb                # 双向LSTM
+│   │   └── cnn.ipynb                   # 卷积神经网络
+│   ├── pretrained_language_models/      # 预训练语言模型
+│   │   ├── bert-base-chinese.ipynb     # BERT中文基础模型
+│   │   ├── chinese-roberta-wwm-ext.ipynb # RoBERTa中文模型
+│   │   ├── Erlangshen-Roberta-110M-Sentiment.ipynb
+│   │   ├── gpt2-chinese-cluecorpussmall.ipynb
+│   │   └── t5-base.ipynb
+│   ├── ensemble_voting/                 # 集成投票方法
+│   │   └── stacking.ipynb              # 堆叠泛化
+│   ├── lexicon/                        # 词典方法
+│   │   └── snownlp.py                  # SnowNLP情感分析
+│   └── stopwords/                      # 停用词
+│       └── stopwords_hit.txt
+├── data collection/                     # 数据收集
+│   └── get_taptap_reviews.py           # TapTap评论爬虫
+├── data/                               # 数据文件
+│   └── README.md                       # 数据集说明
+├── visualisation/                       # 可视化结果
+│   ├── visualisation.ipynb            # 可视化代码
+│   ├── model_accuracy_comparison_high_res.png
+│   ├── *_confusion_matrix.png          # 各模型混淆矩阵
+│   ├── *_classification_report.png     # 各模型分类报告
+│   └── Stacked_Generalization_Diagram_Final_v2.png
+├── LICENSE
+└── README.md
+```
 
-* **Source:** Publicly available user reviews from TapTap (taptap.com / taptap.io).
-* **Collection:** Scraped using a custom Python script targeting the TapTap API.
-* **Scope:** ~40,000 reviews from 40 popular and diverse games (1000 latest reviews per game at the time of scraping).
-* **Features (Raw):** User ID, username, rating (1-5), review text, upvotes, timestamp, device model.
-* **Target:** Sentiment (Binary: 0 for Negative [1-2 stars], 1 for Positive [3-5 stars]).
-* **Processed Data:** After cleaning, the dataset contains 39,985 valid reviews.
-* **Note:** Due to size limitations, only a *sample* of the processed data is included in `data/processed/`. Please refer to `data/README.md` for details on potentially obtaining or regenerating the full dataset.
+## 数据集说明
 
-## Methodology
+- **数据源**：TapTap平台公开用户评论 (taptap.com / taptap.io)
+- **收集方式**：自定义Python爬虫，模拟浏览器请求TapTap API
+- **数据规模**：约40,000条评论，来自40款热门游戏（每款游戏1000条最新评论）
+- **原始特征**：用户ID、用户名、评分(1-5)、评论内容、点赞数、发布时间、设备型号、游戏名称
+- **目标变量**：情感二分类（0=负面[1-2星]，1=正面[3-5星]）
+- **处理后数据**：清洗后包含39,985条有效评论
 
-1. **Data Crawling:** Python script simulating browser requests.
-2. **Preprocessing:** Handled missing values, HTML tags, emojis, special characters, performed Chinese segmentation (for non-BERT models), removed stopwords.
-3. **Feature Engineering:** TF-IDF for traditional ML models; BERT tokenizer for BERT. Included `game_name` and `likes` as features for XGBoost/CatBoost.
-4. **Modeling:**
-   * Evaluated baseline models (Lexicon, LR, KNN, DT, SVM, AdaBoost).
-   * Evaluated advanced single models (XGBoost, CatBoost, CNN, BiLSTM, BERT-base-Chinese).
-   * Implemented **Stacking Ensemble**:
-     * Base Models (Level 0): XGBoost, CatBoost, BERT-base-Chinese.
-     * Meta-Model (Level 1): Logistic Regression.
-5. **Evaluation:** Used Accuracy, Precision, Recall, F1-Score, and Confusion Matrices on a held-out test set.
+**数据获取**：完整数据集已上传至Kaggle - [TapTap Mobile Game Reviews (Chinese)](https://www.kaggle.com/datasets/karwinwang/taptap-mobile-game-reviews-chinese)
 
-## Installation & Setup
+## 研究方法
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/yukito0209/sentiment-analysis-of-taptap-game-user-reviews.git
-   cd sentiment-analysis-of-taptap-game-user-reviews
-   ```
-2. **Create a virtual environment (recommended):**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. **(Optional) Setup for GPU:** Ensure you have the correct CUDA Toolkit and cuDNN versions installed if you plan to train models (especially BERT) on a GPU. PyTorch/TensorFlow installation might need adjustment based on your CUDA version.
-5. **(Optional) Download full data/models:** Follow instructions in `data/README.md` or `models/README.md` if applicable.
+### 1. 数据收集与预处理
+- **爬虫开发**：模拟浏览器请求，处理反爬虫机制
+- **数据清洗**：处理缺失值、HTML标签、表情符号、特殊字符
+- **中文处理**：jieba分词、停用词过滤、文本标准化
 
-## Usage
+### 2. 特征工程
+- **传统ML模型**：TF-IDF向量化
+- **深度学习模型**：词嵌入和序列编码
+- **预训练模型**：BERT tokenizer
+- **增强特征**：游戏名称、点赞数等元数据特征
 
-* **Exploration & Step-by-Step:** Run the Jupyter notebooks in the `notebooks/` directory sequentially (01 to 06).
-* **Run Preprocessing:**
-  ```bash
-  # Example: (Assuming you have a script or function in src/preprocess.py)
-  python src/preprocess.py --input_path data/raw/ --output_path data/processed/
-  ```
-* **Run Model Training:**
-  ```bash
-  # Example: (Assuming you have training scripts in src/models/)
-  python src/models/bert_model.py --train_data data/processed/train.csv --output_dir models/bert_finetuned/
-  python src/models/stacking_model.py --config src/config.py
-  ```
-* **Run Evaluation:**
-  ```bash
-  # Example:
-  python src/evaluate.py --model_path models/stacking_meta_model.pkl --test_data data/processed/test.csv --output_path results/metrics/
-  ```
-* **(Note:** Adapt the commands above based on how you structure your `src/` scripts and arguments.)
+### 3. 模型评估
+#### 基线模型
+- **词典方法**：SnowNLP情感分析
 
-## Results
+#### 传统机器学习
+- 决策树、K近邻、逻辑回归、支持向量机
 
-The Stacking Ensemble model achieved the best performance with **86% accuracy** on the test set. It significantly outperformed all single models, including the best single model (BERT-base-Chinese at 84% accuracy). The ensemble showed improvements in Precision, Recall, and F1-score as well.
+#### 集成学习
+- AdaBoost、XGBoost、CatBoost
 
-Detailed performance metrics for all models can be found in `results/metrics/` and visualized in `results/plots/`. A comprehensive analysis is available in the project report (`docs/IS6941_Group_Project_Report.pdf`).
+#### 深度学习
+- 卷积神经网络(CNN)、双向长短期记忆网络(BiLSTM)
 
-## Future Work
+#### 预训练语言模型
+- BERT-base-Chinese、RoBERTa-wwm-ext、GPT2-Chinese等
 
-* **Error Analysis:** Deeper dive into misclassified reviews.
-* **Handling 3-Star Reviews:** Explore treating "neutral" or manually re-labeling.
-* **Meta-Model Optimization:** Experiment with different meta-learners.
-* **Data Augmentation:** Techniques to increase robustness.
-* **Advanced Text Cleaning:** Handle typos, slang more effectively.
+#### 集成方法
+- **堆叠泛化**：
+  - 基学习器（Level 0）：XGBoost、CatBoost、BERT-base-Chinese
+  - 元学习器（Level 1）：逻辑回归
 
-<!-- ## Team Members (Group GREENDAY)
+## 快速开始
 
-*   Dawei Wu (72404357)
-*   Sifan An (72404401)
-*   Peishan Jing (72406166)
-*   **Jingwen Wang (72405305)** -->
+### 环境要求
+- Python 3.8+
+- CUDA 11.0+（可选，用于GPU加速）
 
-## License
+### 安装步骤
 
-This project is licensed under the [MIT License] - see the `LICENSE` file for details.
+1. **克隆仓库**
+```bash
+git clone https://github.com/yukito0209/sentiment-analysis-of-taptap-game-user-reviews.git
+cd sentiment-analysis-of-taptap-game-user-reviews
+```
+
+2. **创建虚拟环境**
+```bash
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# Linux/Mac
+source venv/bin/activate
+```
+
+3. **安装依赖**
+```bash
+# 基础依赖
+pip install pandas numpy scikit-learn matplotlib seaborn jieba
+
+# 深度学习依赖
+pip install torch torchvision transformers
+
+# 梯度提升模型
+pip install xgboost catboost
+
+# 其他工具
+pip install requests beautifulsoup4 emoji snownlp
+```
+
+### 使用方法
+
+#### 数据收集
+```bash
+# 修改游戏ID和输出文件名
+python "data collection/get_taptap_reviews.py"
+```
+
+#### 数据清洗
+```bash
+cd analytics/data_cleaning
+python data_cleaning.py
+```
+
+#### 模型训练与评估
+```bash
+# 在对应的目录中运行Jupyter Notebook
+jupyter notebook
+
+# 按以下顺序运行：
+# 1. analytics/data_exploring/data_exploring.ipynb - 数据探索
+# 2. analytics/traditional_ml_models/ - 传统ML模型
+# 3. analytics/ensemble_learning_models/ - 集成学习模型
+# 4. analytics/neural_network_models/ - 深度学习模型
+# 5. analytics/pretrained_language_models/ - 预训练模型
+# 6. analytics/ensemble_voting/stacking.ipynb - 堆叠集成
+# 7. visualisation/visualisation.ipynb - 结果可视化
+```
+
+## 📊 实验结果
+
+### 模型性能对比
+
+| 模型类别 | 模型名称 | 准确率 |
+|---------|---------|--------|
+| 词典方法 | SnowNLP | 67% |
+| 传统ML | 决策树 | 72% |
+|  | K近邻 | 75% |
+|  | AdaBoost | 77% |
+|  | 逻辑回归 | 81% |
+|  | SVM | 81% |
+|  | XGBoost | 83% |
+|  | CatBoost | 83% |
+| 深度学习 | CNN | 79% |
+|  | BiLSTM | 80% |
+| 预训练模型 | GPT2-Chinese | 83% |
+|  | BERT-base-Chinese | 84% |
+|  | RoBERTa-wwm-ext | 84% |
+| **集成方法** | **堆叠泛化** | **86%** |
+
+### 关键发现
+- **堆叠集成模型**达到最佳性能（86%准确率）
+- **BERT类模型**在单模型中表现最优（84%准确率）
+- **模型组合**显著提升了分类性能
+- **中文预训练模型**比传统方法更适合中文情感分析
+
+详细的性能指标和混淆矩阵可在`visualisation/`目录中查看。
+
+## 📈 可视化结果
+
+项目包含丰富的可视化分析：
+- 模型准确率对比图
+- 混淆矩阵热力图
+- 分类报告详情
+- 堆叠泛化架构图
+- 词云分析图
+
+## 🔮 未来改进方向
+
+- **错误分析**：深入分析误分类样本
+- **中性评论处理**：探索3星评论的标注策略
+- **元学习器优化**：尝试更复杂的元学习算法
+- **数据增强**：提高模型鲁棒性的技术
+- **文本预处理增强**：更好地处理网络用语和错字
+- **实时部署**：开发在线情感分析API
+
+## 🤝 贡献
+
+欢迎提交Issue和Pull Request来改进项目！
+
+## 📄 许可证
+
+本项目基于 [MIT License](LICENSE) 开源。
